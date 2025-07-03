@@ -1,0 +1,12 @@
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+jupyter
+langchain
+sentence-transformers
+faiss-cpu
+chromadb
+gradio
+openai  # Optional if using OpenAI models
