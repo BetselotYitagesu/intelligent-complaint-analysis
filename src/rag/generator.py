@@ -1,4 +1,7 @@
-from transformers import pipeline
+"""
+Rag pipeline generator
+"""
+from transformers.pipelines import pipeline
 
 # Initialize text generation pipeline with appropriate device setting
 qa_pipeline = pipeline(

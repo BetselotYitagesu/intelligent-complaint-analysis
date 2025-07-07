@@ -1,3 +1,4 @@
+import os
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 
@@ -5,9 +6,13 @@ embedding_model = HuggingFaceEmbeddings(
     model_name="all-MiniLM-L6-v2"
 )
 
+# Get the absolute path to the vector_store directory
+vector_store_path = os.path.abspath("vector_store/")
+
 vector_store = FAISS.load_local(
-    "vector_store/",
-    embedding_model
+    vector_store_path,
+    embedding_model,
+    allow_dangerous_deserialization=True
 )
 
 
