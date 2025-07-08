@@ -1,15 +1,7 @@
-RAG_PROMPT_TEMPLATE = """
-You are a financial analyst assistant at CrediTrust Financial. Your task is to 
-answer questions about customer complaints based only on the provided excerpts.
-
-Use the following context to answer the question. If the context doesn't 
-contain the answer, reply: "I don't have enough information to answer that."
-
-Context:
-{context}
-
-Question:
-{question}
-
-Answer:
-"""
+def build_prompt(context_chunks: list[str], question: str) -> str:
+    context = "\n\n".join(context_chunks)
+    prompt = (
+        f"Use the following customer complaint excerpts to answer question.\n"
+        f"Context:\n{context}\n\nQuestion: {question}\nAnswer:"
+    )
+    return prompt

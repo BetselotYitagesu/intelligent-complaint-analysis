@@ -151,12 +151,77 @@ This stage is focused on preparing the cleaned complaint narratives for semantic
 
 Proceed to **Task 3**: Building the RAG pipeline and evaluating the system's ability to answer real product-related questions from customer complaints.
 
-Task 3: Build RAG Pipeline & Evaluate
+Task 3: Retrieval-Augmented Generation (RAG) Pipeline & Evaluation
+Overview
 
-Implement the retriever and LLM generator pipeline, then perform qualitative evaluation with test questions.
+In Task 3, we built the core logic of the RAG-powered complaint answering system. This involved integrating semantic search over complaint text chunks with a language model to generate concise, insightful answers to user questions.
+Key Components
+
+    Retriever: Uses a vector database (FAISS) to perform semantic similarity search on complaint embeddings and retrieve relevant text chunks.
+
+    Prompt Template: Constructs a clear, instructional prompt combining retrieved text excerpts and the user question to guide the LLM.
+
+    Generator: Uses an open-source Hugging Face seq2seq model (google/flan-t5-base) to generate answers locally without requiring API keys.
+
+    Pipeline: Combines retriever, prompt, and generator into a unified interface for querying.
+
+Evaluation
+
+    Developed a set of 5 representative questions to test the system.
+
+    For each question, the pipeline returns an answer and the relevant source excerpts.
+
+    An evaluation table was created (in Markdown format) documenting the question, generated answer, source excerpts, quality score (to be filled manually), and comments.
+
+    This qualitative evaluation highlighted strengths and areas for improvement.
+
+Usage
+
+Example usage snippet:
+
+from src.rag.rag_pipeline import RAGPipeline
+
+rag = RAGPipeline(k=5)
+result = rag.answer("Why are users unhappy with Buy Now, Pay Later?")
+print(result["answer"])
+print(result["sources"][:2]) # Show first two source chunks
+
 Task 4: Interactive Chat Interface
+Overview
 
-Launch the chatbot UI for querying customer complaints in natural language.
+Task 4 focused on building a user-friendly web interface enabling non-technical users to interact with the RAG pipeline. The interface allows users to type natural language questions and receive answers along with source complaint excerpts for transparency and trust.
+Implementation
+
+    Built using Gradio, a Python library for creating simple web UIs quickly.
+
+    The app includes:
+
+        A text input box for user questions.
+
+        A submit button to trigger query processing.
+
+        Output areas showing the AI-generated answer and the source complaint excerpts.
+
+        A clear button to reset the interface.
+
+Running the App
+
+To start the app, run:
+
+python src/ui/app.py
+
+This launches a local web server accessible at http://127.0.0.1:7860.
+Screenshots / Demo
+
+Screenshots or a GIF demonstrating the interface are included in the docs/ folder (or embedded in the final report).
+User Benefits
+
+    Enables Product Managers, Support, and Compliance teams to quickly query thousands of complaints without technical skills.
+
+    Shows sources to increase answer trustworthiness.
+
+    Reduces time to identify key complaint trends from days to minutes.
+
 Technologies & Tools
 
     Python 3.8+

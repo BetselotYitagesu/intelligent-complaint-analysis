@@ -1,34 +1,23 @@
-import os
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
+import faiss
+import numpy as np
+import pickle
 
-embedding_model = HuggingFaceEmbeddings(
-    model_name="all-MiniLM-L6-v2"
-)
-
-# Get the absolute path to the vector_store directory
-vector_store_path = os.path.abspath("vector_store/")
-
-vector_store = FAISS.load_local(
-    vector_store_path,
-    embedding_model,
-    allow_dangerous_deserialization=True
-)
+from sentence_transformers import SentenceTransformer
 
 
-def retrieve_relevant_chunks(query: str, k: int = 5):
-    """
-    Retrieve top-k relevant chunks from the vector store for a query.
+class ComplaintRetriever:
+    def __init__(self, index_path="../vector_store/index.faiss", 
+                 metadata_path="../vector_store/index.pkl"):
+        self.index = faiss.read_index(index_path)
+        with open(metadata_path, "rb") as f:
+            self.metadata = pickle.load(f)
+        self.model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    Args:
-        query (str): User question.
-        k (int): Number of chunks to retrieve.
-
-    Returns:
-        List of docs with page_content and metadata.
-    """
-    docs = vector_store.similarity_search(
-        query,
-        k=k
-    )
-    return docs
+    def retrieve(self, query: str, k: int = 5):
+        query_embedding = self.model.encode([query])
+        distances, indices = self.index.search(np.array(query_embedding), k)
+        results = []
+        for i in indices[0]:
+            if i < len(self.metadata):
+                results.append(self.metadata[i] | {"chunk_id": i})  # merge 
+        return results

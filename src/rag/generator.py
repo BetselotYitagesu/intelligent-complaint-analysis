@@ -1,31 +1,28 @@
-"""
-Rag pipeline generator
-"""
-from transformers.pipelines import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-# Initialize text generation pipeline with appropriate device setting
-qa_pipeline = pipeline(
-    "text-generation",
-    model="tiiuae/falcon-7b-instruct",
-    device=0
-)
+# New lines (small model)
+tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
+model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small")
 
 
-def generate_answer(prompt: str, max_tokens: int = 200):
+def generate_answer(prompt: str, max_length: int = 256) -> str:
     """
-    Generate answer from LLM based on the prompt.
+    Generate answer from prompt using flan-t5-base model.
 
     Args:
-        prompt (str): Prompt text including context & question.
-        max_tokens (int): Max tokens to generate.
+        prompt (str): Input prompt containing context + question.
+        max_length (int): Maximum length of generated tokens.
 
     Returns:
-        Generated answer (str).
+        str: Generated answer text.
     """
-    outputs = qa_pipeline(
-        prompt,
-        max_new_tokens=max_tokens,
-        do_sample=True
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, 
+                       max_length=512)
+    outputs = model.generate(
+        **inputs,
+        max_length=max_length,
+        num_beams=4,
+        early_stopping=True
     )
-    generated_text = outputs[0]["generated_text"]
-    return generated_text
+    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return answer
