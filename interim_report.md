@@ -29,7 +29,6 @@ We then used the lightweight and efficient all-MiniLM-L6-v2 model from the sente
 In total, approximately 1.38 million text chunks were generated and embedded. These embeddings were indexed using FAISS, an efficient similarity search library. The vector index and associated metadata were saved in the vector_store/ directory as:
 
     -faiss_index.index (vector store)
-
     - metadata.pkl (product and complaint mappings)
 
 This structured embedding layer now forms the backbone of our intelligent retrieval engine, enabling the next stage—building the RAG pipeline and evaluating its ability to generate accurate, grounded answers based on real complaints.
